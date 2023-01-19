@@ -27,13 +27,13 @@ public class HeroController {
         return heroRepository.save(hero);
     }
 
-    /*@PutMapping("/{id}")
+    @PutMapping("/{id}")
     public String showUpdateForm(@PathVariable("id") long id, Hero newHero) {
         Hero heroToUpdate = this.heroRepository.findById(id).get();
         heroToUpdate.setId(newHero.getId());
         heroToUpdate.setName(newHero.getName());
         return heroRepository.save(heroToUpdate);
-    }*/
+    }
 
     @PostMapping("/update/{id}")
     public String updateHero(@PathVariable("id") long id, @Valid Hero hero,
