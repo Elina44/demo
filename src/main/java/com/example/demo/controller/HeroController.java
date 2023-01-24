@@ -2,7 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Hero;
 import com.example.demo.repository.HeroRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -15,44 +17,38 @@ import java.util.List;
 public class HeroController {
     @Autowired
     HeroRepository heroRepository;
+    @Autowired
+    EntityManager entityManager;
 
     @GetMapping
     public List<Hero> findAll() {
         return heroRepository.findAll();
     }
 
+    @GetMapping("/{id}")
+    public Hero show(@PathVariable long id) {
+        return this.heroRepository.findById(id).get();
+    }
 
     @PostMapping("/addhero")
-    public Hero addHero(@Valid @RequestBody Hero hero) {
+    public Hero create(@Valid @RequestBody Hero hero) {
         return heroRepository.save(hero);
     }
 
+
     @PutMapping("/{id}")
-    public String showUpdateForm(@PathVariable("id") long id, Hero newHero) {
-        Hero heroToUpdate = this.heroRepository.findById(id).get();
-        heroToUpdate.setId(newHero.getId());
-        heroToUpdate.setName(newHero.getName());
-        return heroRepository.save(heroToUpdate);
+    public Hero update(@PathVariable long id, @RequestBody Hero hero) {
+        /*System.out.println(hero.getId());*/
+        hero.setName(hero.getName());
+        return heroRepository.save(hero);
     }
 
-    @PostMapping("/update/{id}")
-    public String updateHero(@PathVariable("id") long id, @Valid Hero hero,
-                             BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            hero.setId(id);
-            return "update-hero";
-        }
 
-        heroRepository.save(hero);
-        return "redirect:/api/heroes";
+    @DeleteMapping("/{id}")
+    public boolean deleteById(@PathVariable("id") long id ) {
+        heroRepository.deleteById(id);
+        return true;
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteHero(@PathVariable("id") long id, Model model) {
-        Hero hero = heroRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid heros Id:" + id));
-        heroRepository.delete(hero);
-        return "redirect:/api/heroes";
-    }
 
 }
