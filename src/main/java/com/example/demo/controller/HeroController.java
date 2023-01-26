@@ -38,7 +38,7 @@ public class HeroController {
 
     @PutMapping("/{id}")
     public Hero update(@PathVariable long id, @RequestBody Hero hero) {
-        /*System.out.println(hero.getId());*/
+        System.out.println(hero.getId());
         hero.setName(hero.getName());
         return heroRepository.save(hero);
     }
